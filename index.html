@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelagem Matemática e Computacional</title>
+          <link rel="stylesheet" type="text/css" href="https://riberafa.github.io/modelagem-matematica/style.css" />
+    <!-- <script src="./modmat.js"></script> -->
+    <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
+  </head>
+  <body>
+    <div class="header">
+      Modelagem Matemática e Computacional - 2022.2
+    </div>
+    <p class="title">Simulação da Dinâmica de Disseminação de Fake News</p>
+
+    <div class="header-site">
+      <div class="column-divisor1"></div>
+      <form id="fakenewsform">
+        <div class="form-first-section">
+          <div class="align-input">
+            <p class="input-text">Beta:</p>
+            <input class="input" type="number" step=".1" min=0 max=1 name="beta" value=0.6><br>
+          </div>
+          <div class="align-input">
+            <p class="input-text">b:</p>
+            <input class="input" type="number" step=".1" min=0 max=1 name="b"  value=0.4><br>
+          </div>
+          <div class="align-input">
+            <p class="input-text">rho:</p>
+            <input class="input" type="number" step=".1" min=0 max=1 name="rho"  value=0.1><br>
+          </div>
+          <div class="align-input">
+            <p class="input-text">eps:</p>
+            <input class="input" type="number" step=".01" min=0 max=1 name="eps"  value=0.05><br>
+          </div>
+          <div class="align-input">
+            <p class="input-text">theta:</p>
+            <input class="input" type="number" step=".1" min=0 max=1 name="theta"  value=0.5><br>
+          </div>
+          <div class="align-input">
+            <p class="input-text">p1:</p>
+            <input class="input" type="number" step=".1" min=0 max=1 name="p1"  value=0.2><br>
+          </div>
+          <div class="align-input">
+            <p class="input-text">l:</p>
+            <input class="input" type="number" step=".1" min=0 max=1 name="l"  value=0.4><br><br>
+          </div>
+        </div>
+
+        <div class="form-second-section">
+          <div class="align-input">
+            <p class="input-text">S(0):</p>
+            <input class="input" type="number" step=".1" min=0 max=1 name="S_0"  value=0.4><br>
+          </div>
+          <div class="align-input">
+            <p class="input-text">E(0):</p>
+            <input class="input" type="number" step=".1" min=0 max=1 name="E_0"  value=0.3><br>
+          </div>
+          <div class="align-input">
+            <p class="input-text">I(0):</p>
+            <input class="input" type="number" step=".1" min=0 max=1 name="I_0"  value=0.2><br>
+          </div>
+          <div class="align-input">
+            <p class="input-text">Z(0):</p>
+            <input class="input" type="number" step=".1" min=0 max=1 name="Z_0"  value=0.1><br><br>
+          </div>        
+        </div>
+      </form>
+    </div>
+
+    <div class="button-align">
+      <button id="open-modal">Variáveis e parâmetros</button>  
+      <button class="button-site" onclick="plot()">Visualizar</button>
+    </div>
+    <div id="plotter" style="width:600px;"></div>
+
+    <div class="footer">
+      <div class="content-site">
+        <div class="column-divisor2"></div>
+        <div class="container-content">
+          <p class="text-download">O relatório completo realizado sobre este trabalho encontra-se disponível abaixo:</p>
+          <a class="button-download" href="./assets/relatorio-modelagem-computacional.pdf" download target="_blank">Relatório</a>
+          <div class="circle-person"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="fade" class="hide"></div>
+    <div id="modal" class="hide">
+      <div class="modal-header">
+        <h1>Variáveis e parâmetros</h1>
+        <button id="close-modal">Fechar</button>
+      </div>
+      <div class="modal-body">
+        <p>Todas as variáveis do sistema representam a quantidade de pessoas em cada uma
+          das quatro categorias. No entanto, esta quantidade não é absoluta, ou seja, não
+          conta, literalmente, quantas pessoas pertencem à categoria. Na verdade elas 
+          representam as quantidades com relação a um total de pessoas implícito, portanto,
+          uma razão entre as pessoas em certa categoria e todas as pessoas que podem ou
+          não saber da notícia, ou seja, (pessoas/pessoas = 1), logo, são variáveis com 
+          grandeza/unidade adimensional. Abaixo, temos a Tabela 1, resumindo as variáveis 
+          do sistema:
+        </p>
+        <img src="./assets/variaveis1.png" class="img-variaveis" alt="variáveis imagem">
+        <p>Além disso, como cada uma dessas variáveis são 
+          uma razão do total, logo
+        </p>
+        <img src="./assets/variaveis2.png"  class="img-variaveis" alt="variáveis imagem">
+        <h1>Parâmetros</h1>
+        <p>
+          Os parâmetros são valores que determinam o comportamento geral do sistema.
+          Alguns representam a taxa em que duas categorias de pessoas entram em contato
+          e outras determinam a transição destas.
+        </p>
+        <img src="./assets/variaveis3.png" class="img-variaveis" alt="variáveis imagem">
+        <h1>Relação entre variáveis</h1>
+        <p>
+          No termos do sistema acima podemos perceber algumas relações que possuem padrões
+          em comum. Em quase todos os termos, há uma relação multiplicativa entre duas variáveis, 
+          por exemplo no termo ISβ as variáveis I e S se multiplicam, representando a quantidade de
+          contato entre pessoas Infectadas e Suscetíveis, ou seja, IS é uma permutação simples
+          entre pessoas dessas duas categorias. Podemos utilizar a notação S-I para representar
+          esse contato.
+        </p>
+        <p>
+          Além disso, para todo contato há um parâmetro que o pondera, ou seja, a taxa de
+          contato. Novamente no termo ISβ, o parâmetro é β. Portanto, o termo completo indica,
+          dentre todos os contatos possíveis, quantos de fato ocorrem por hora.
+        </p>
+        <p>
+          Ainda há outra relação característica no sistema, que podemos observar, por exemplo, no termo ISβp1. O termo ISβ já conhecemos, então sua relação com a probabilidade
+          p1 significa que, dentre os contatos S-I que de fato ocorrem por hora, quantos Suscetíveis transicionam diretamente para Infectados. Analogamente, ISβ(1−p1) é quando não
+          ocorre essa transição direta, ou seja, a transição é de Suscetível para Exposto. Podemos
+          utilizar a notação S → I e S → E para representar essas transições, respectivamente.
+        </p>
+        <p>          
+          Enfim, temos o termo Eε. O parâmetro ε é a taxa de incubação, ou seja, a magnitude em que pessoas Expostas tornam-se Infectadas sem precisar de qualquer contato
+          por hora. Portanto, o termo completo indica quantas Expostas tornam-se Infectadas sem
+          precisar de qualquer contato.
+        </p>
+      </div>
+    </div>
+
+  </body>
+
+  <script>
+    function metodo_RK_4(f_S, f_E, f_I, f_Z, t_0, t_f, S_0, E_0, I_0, Z_0, N){
+      // lista com os passos de tempo t
+      let t = [t_0]
+
+      // lista com as aproximações de x em cada um dos passos de tempo
+      let S = [S_0]
+      let E = [E_0]
+      let I = [I_0]
+      let Z = [Z_0]
+      
+      // tamanho do passo no tempo
+      let d_t = (t_f-t_0)/N
+
+      for(let n = 0; n < N; n++){
+        // Calculando os termos k_n's do metodo Runge-Kutta
+        // para cada uma das duas variáveis x_1 e x_2
+        const k_S_1 = d_t*f_S(t[n], S[n], E[n], I[n], Z[n])
+        const k_E_1 = d_t*f_E(t[n], S[n], E[n], I[n], Z[n])
+        const k_I_1 = d_t*f_I(t[n], S[n], E[n], I[n], Z[n])
+        const k_Z_1 = d_t*f_Z(t[n], S[n], E[n], I[n], Z[n])
+
+        const k_S_2 = d_t*f_S(t[n] + d_t/2, S[n] + k_S_1/2, E[n] + k_E_1/2, I[n] + k_I_1/2, Z[n] + k_Z_1/2)
+        const k_E_2 = d_t*f_E(t[n] + d_t/2, S[n] + k_S_1/2, E[n] + k_E_1/2, I[n] + k_I_1/2, Z[n] + k_Z_1/2)
+        const k_I_2 = d_t*f_I(t[n] + d_t/2, S[n] + k_S_1/2, E[n] + k_E_1/2, I[n] + k_I_1/2, Z[n] + k_Z_1/2)
+        const k_Z_2 = d_t*f_Z(t[n] + d_t/2, S[n] + k_S_1/2, E[n] + k_E_1/2, I[n] + k_I_1/2, Z[n] + k_Z_1/2)
+
+        const k_S_3 = d_t*f_S(t[n] + d_t/2, S[n] + k_S_2/2, E[n] + k_E_2/2, I[n] + k_I_2/2, Z[n] + k_Z_2/2)
+        const k_E_3 = d_t*f_E(t[n] + d_t/2, S[n] + k_S_2/2, E[n] + k_E_2/2, I[n] + k_I_2/2, Z[n] + k_Z_2/2)
+        const k_I_3 = d_t*f_I(t[n] + d_t/2, S[n] + k_S_2/2, E[n] + k_E_2/2, I[n] + k_I_2/2, Z[n] + k_Z_2/2)
+        const k_Z_3 = d_t*f_Z(t[n] + d_t/2, S[n] + k_S_2/2, E[n] + k_E_2/2, I[n] + k_I_2/2, Z[n] + k_Z_2/2)
+
+        const k_S_4 = d_t*f_S(t[n] + d_t, S[n] + k_S_3, E[n] + k_E_3, I[n] + k_I_3, Z[n] + k_Z_3)
+        const k_E_4 = d_t*f_E(t[n] + d_t, S[n] + k_S_3, E[n] + k_E_3, I[n] + k_I_3, Z[n] + k_Z_3)
+        const k_I_4 = d_t*f_I(t[n] + d_t, S[n] + k_S_3, E[n] + k_E_3, I[n] + k_I_3, Z[n] + k_Z_3)
+        const k_Z_4 = d_t*f_Z(t[n] + d_t, S[n] + k_S_3, E[n] + k_E_3, I[n] + k_I_3, Z[n] + k_Z_3)
+
+        // calculando a aproximação de x_1_n e x_2_n
+        const S_n = S[n] + (k_S_1 + 2*k_S_2 + 2*k_S_3 + k_S_4)/6
+        const E_n = E[n] + (k_E_1 + 2*k_E_2 + 2*k_E_3 + k_E_4)/6
+        const I_n = I[n] + (k_I_1 + 2*k_I_2 + 2*k_I_3 + k_I_4)/6
+        const Z_n = Z[n] + (k_Z_1 + 2*k_Z_2 + 2*k_Z_3 + k_Z_4)/6
+
+        // atualizando o valor do passo de tempo
+        t_n = t[n] + d_t
+        
+        // acrescentando os valores calculados nas listas
+        S.push(S_n)
+        E.push(E_n)
+        I.push(I_n)
+        Z.push(Z_n)
+        t.push(t_n)
+      }
+      
+      return [t, S, E, I, Z]
+    }
+
+    function problem_conditions(beta, p1, b, l, rho, eps, theta){
+      function f_S(t, S, E, I, Z){
+        return -I*S*beta - S*Z*b
+      }
+
+      function f_E(t, S, E, I, Z){
+        return -E*eps - theta*E*Z - E*I*rho + I*S*beta*(1-p1) + S*Z*b*(1-l)
+      }
+
+      function f_I(t, S, E, I, Z){
+        return E*eps + E*I*rho + I*S*beta*p1
+      }
+
+      function f_Z(t, S, E, I, Z){
+        return theta*E*Z + S*Z*b*l
+      }
+
+      return [f_S, f_E, f_I, f_Z]
+    }
+
+    function solve_problem({beta, p1, b, l, rho, eps, theta, S_0, E_0, I_0, Z_0, t_0, t_f}){
+      const [f_S, f_E, f_I, f_Z] = problem_conditions(beta, p1, b, l, rho, eps, theta)
+
+      const N = 500
+
+      return metodo_RK_4(f_S, f_E, f_I, f_Z, t_0, t_f, S_0, E_0, I_0, Z_0, N)
+    }
+
+    function plot(){    
+      let elems = document.getElementById("fakenewsform");
+      let params = {}
+
+      for (let i = 0; i < elems.length; i++) {
+        const elel = elems.elements[i]
+        if (elel !== undefined)
+          params[elems.elements[i].name] = Number(elems.elements[i].value)
+      }
+
+      params = {...params, t_0 :0, t_f: 25}
+
+      const res = solve_problem(params)
+
+      const [x, S, E, I, Z] = res
+
+      console.log(S[S.length-1])
+      console.log(E[S.length-1])
+      console.log(I[S.length-1])
+      console.log(Z[S.length-1])
+
+
+      const layout = {
+        title: 'População em cada categoria',
+        xaxis: {
+          title: 'Horas',
+          zeroline: false,
+        },
+        yaxis: {
+          title: '',
+          showline: false,
+          range: [0, Math.max(S[S.length-1], E[S.length-1], I[S.length-1], Z[S.length-1])+0.2]
+
+        }
+      };
+
+      TESTER = document.getElementById('plotter');
+        Plotly.newPlot( 
+          TESTER, 
+          [ {x: x, y: S,
+              name: 'Suscetíveis',
+              line: {dash: 'dash', width: 2}}, 
+            {x: x, y: E,
+              name: 'Expostos',
+              line: {dash: 'dash', width: 2} }, 
+            {x: x, y: I, 
+              name: 'Infectados',
+              line: {dash: 'dash', width: 2} }, 
+            {x: x, y: Z,
+              name: 'Protestantes',
+              line: {dash: 'dash', width: 2} }], 
+          layout
+        );
+    }
+
+    //modal
+    const openModalButton = document.querySelector("#open-modal");
+    const closeModalButton = document.querySelector("#close-modal");
+    const modal = document.querySelector("#modal");
+    const fade = document.querySelector("#fade");
+
+    const toggleModal = () => {
+      modal.classList.toggle("hide");
+      fade.classList.toggle("hide");
+    };
+
+    [openModalButton, closeModalButton, fade].forEach((el) => {
+      el.addEventListener("click", () => toggleModal());
+    });
+  </script>
+</html>
